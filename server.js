@@ -4,7 +4,7 @@
 // get .env variables
 require("dotenv").config();
 // pull PORT from .env, give default value of 3001
-const { PORT = 3001 } = process.env;
+const { PORT = 3001, DATABASE_URL } = process.env;
 // import express
 const express = require("express");
 // create application object
@@ -22,6 +22,11 @@ const morgan = require("morgan")
 // Establish Connection
 mongoose.connect(DATABASE_URL)
 // Connection events
+mongoose.connection
+    .on("open", () => console.log("MongoDB Connected"))
+    .on("close", () => console.log("Connection Disabled"))
+    .on("error", (error) => console.log(error))
+    
 mongoose.connect(process.env.DATABASE_URL, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
