@@ -22,11 +22,11 @@ const morgan = require("morgan")
 // Establish Connection
 mongoose.connect(DATABASE_URL)
 // Connection events
-mongoose.connection
+mongoose.connection // these .on things are not essential, just for logging if you want
     .on("open", () => console.log("MongoDB Connected"))
     .on("close", () => console.log("Connection Disabled"))
     .on("error", (error) => console.log(error))
-    
+
 mongoose.connect(process.env.DATABASE_URL, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -51,7 +51,7 @@ app.use(morgan("dev")) // logging
 app.use(express.json()) // parse json bodies
 
 ///////////////////////////////
-// ROUTES
+// CRUD ROUTES: index delete create update show
 ////////////////////////////////
 // create a test route
 app.get("/", (req, res) => {
@@ -74,6 +74,30 @@ app.post("/people", async (req, res) => {
   try {
     // send all people
     res.json(await People.create(req.body))
+  } catch (error) {
+    //send error
+    res.status(400).json(error)
+  }
+})
+
+// PEOPLE DELETE ROUTE
+app.delete("/people/:id", async (req, res) => {
+  try {
+    // send all people
+    res.json(await People.findByIdAndDelete(req.params.id))
+  } catch (error) {
+    //send error
+    res.status(400).json(error)
+  }
+})
+
+// PEOPLE UPDATE ROUTE
+app.put("/people/:id", async (req, res) => {
+  try {
+    // send all people
+    res.json(
+      await People.findByIdAndUpdate(req.params.id, req.body, { new: true })
+    )
   } catch (error) {
     //send error
     res.status(400).json(error)
